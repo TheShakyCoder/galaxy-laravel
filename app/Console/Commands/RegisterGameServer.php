@@ -28,7 +28,7 @@ class RegisterGameServer extends Command
     public function handle(): int
     {
         $server = GameServer::query()->firstOrNew(['slug' => $this->argument('slug')]);
-        $isNew = ! $server->exists;
+        $isNew = !$server->exists;
 
         $attributes = array_filter([
             'name' => $this->option('name'),
@@ -36,14 +36,14 @@ class RegisterGameServer extends Command
             'internal_url' => $this->option('internal-url'),
             'http_key' => $this->option('http-key'),
             'play_token_secret' => $this->option('secret'),
-        ], fn (?string $value) => $value !== null && $value !== '');
+        ], fn(?string $value) => $value !== null && $value !== '');
 
         $server->fill($attributes);
         $server->fill([
             'nakama_port' => (int) $this->option('port'),
-            'nakama_ssl' => ! $this->option('insecure'),
+            'nakama_ssl' => !$this->option('insecure'),
             'nakama_server_key' => $this->option('server-key'),
-            'is_open' => ! $this->option('closed'),
+            'is_open' => !$this->option('closed'),
         ]);
 
         $generatedSecret = null;
@@ -66,13 +66,16 @@ class RegisterGameServer extends Command
 
         $server->save();
 
-        $this->info(($isNew ? 'Added' : 'Updated')." game server {$server->slug} ({$server->apiUrl()}).");
+        $this->info(($isNew ? 'Added' : 'Updated') . " game server {$server->slug} ({$server->apiUrl()}).");
 
         if ($generatedSecret !== null) {
             $this->newLine();
             $this->line('Set these on that Nakama deployment:');
+            $this->line('');
             $this->line("  SERVER_ID={$server->slug}");
+            $this->line('');
             $this->line("  PLAY_TOKEN_SECRET={$generatedSecret}");
+            $this->line('');
         }
 
         return self::SUCCESS;
