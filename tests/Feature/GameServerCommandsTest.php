@@ -28,12 +28,24 @@ test('a new server needs a host and http key', function () {
     expect(GameServer::query()->count())->toBe(0);
 });
 
-test('updating a server keeps its secrets unless new ones are given', function () {
-    $server = GameServer::factory()->create(['slug' => 'api1', 'play_token_secret' => 'kept-secret']);
+test('updating a server changes only the options given', function () {
+    $server = GameServer::factory()->create([
+        'slug' => 'api1', 'play_token_secret' => 'kept-secret', 'nakama_server_key' => 'kept-key',
+        'nakama_port' => 7350, 'nakama_ssl' => false,
+    ]);
 
     $this->artisan('galaxy:server', ['slug' => 'api1', '--closed' => true])->assertSuccessful();
 
-    expect($server->fresh())->play_token_secret->toBe('kept-secret')->is_open->toBeFalse();
+    expect($server->fresh())
+        ->is_open->toBeFalse()
+        ->play_token_secret->toBe('kept-secret')
+        ->nakama_server_key->toBe('kept-key')
+        ->nakama_port->toBe(7350)
+        ->nakama_ssl->toBeFalse();
+
+    $this->artisan('galaxy:server', ['slug' => 'api1', '--open' => true, '--server-key' => 'new-key', '--secure' => true])->assertSuccessful();
+
+    expect($server->fresh())->is_open->toBeTrue()->nakama_server_key->toBe('new-key')->nakama_ssl->toBeTrue()->nakama_port->toBe(7350);
 });
 
 test('dev play tokens are only issued in the local environment', function () {
