@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\NakamaClient;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,13 +44,20 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, NakamaClient $nakama): RedirectResponse
     {
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
+
+        // Their pilots and progress on every game server go too. A server
+        // that can't be reached keeps an orphaned game account (logged); no
+        // one can sign in to it without this site.
+        foreach ($user->gameServers as $server) {
+            $nakama->deletePlayer($server, $user->uuid);
+        }
 
         Auth::logout();
 

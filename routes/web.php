@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PlayController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +16,17 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/play', [PlayController::class, 'index'])->name('play');
+    Route::post('/play/{server}', [PlayController::class, 'select'])->name('play.select');
+});
+
+// Called by play.fig.limited (nginx), not by browsers directly: they answer
+// 401 instead of redirecting to the login page.
+Route::get('/play/auth-check', [PlayController::class, 'authCheck'])->name('play.auth-check');
+Route::get('/play/token', [PlayController::class, 'token'])->name('play.token');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
