@@ -53,7 +53,7 @@ test('a play token identifies the user to the chosen server', function () {
         'name' => 'Starbuck',
         'exp' => now()->getTimestamp() + config('galaxy.play_token_ttl'),
     ]);
-    $this->assertDatabaseHas('server_user', ['user_id' => $user->id, 'server_id' => $server->id]);
+    $this->assertDatabaseHas('players', ['user_id' => $user->id, 'server_id' => $server->id]);
 });
 
 test('a play token is refused to guests and unverified users', function (?User $user) {

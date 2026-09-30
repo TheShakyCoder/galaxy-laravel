@@ -50,6 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function servers(): BelongsToMany
     {
-        return $this->belongsToMany(Server::class)->withPivot('first_played_at', 'last_played_at');
+        return $this->belongsToMany(Server::class, 'players')->withPivot('first_played_at', 'last_played_at');
     }
 }

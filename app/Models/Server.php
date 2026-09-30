@@ -63,7 +63,7 @@ class Server extends Model
      */
     public function players(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withPivot('first_played_at', 'last_played_at');
+        return $this->belongsToMany(User::class, 'players')->withPivot('first_played_at', 'last_played_at');
     }
 
     /**

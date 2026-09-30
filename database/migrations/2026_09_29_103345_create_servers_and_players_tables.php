@@ -6,19 +6,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Game servers (App\Models\Server) and which users have played on each
- * (the server_user pivot).
+ * Game servers (App\Models\Server) and players: which users have played on
+ * which server (the players pivot between users and servers).
  *
- * This replaced four earlier migrations (create_game_servers,
- * create_game_server_user, add_uuid_to_users and rename_game_servers_to_servers)
- * when they were squashed to one migration per model. A database that ran
- * those already has these tables: there it only renames the slug index left
- * from game_servers and forgets the old migrations.
+ * One migration per model: this replaces the earlier migrations listed in
+ * REPLACED. A database that ran those already has the tables; there it only
+ * brings them up to date (the slug index left from game_servers, and the
+ * pivot's old name server_user) and forgets the old migrations.
  */
 return new class extends Migration
 {
     /**
-     * The squashed migrations this one replaces.
+     * The earlier migrations this one replaces.
      *
      * @var list<string>
      */
@@ -27,6 +26,7 @@ return new class extends Migration
         '2026_09_29_103345_create_game_servers_table',
         '2026_09_29_103346_create_game_server_user_table',
         '2026_09_30_150947_rename_game_servers_to_servers',
+        '2026_09_29_103345_create_servers_table',
     ];
 
     /**
@@ -35,13 +35,7 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('servers')) {
-            // Left over from when this table was game_servers.
-            if (Schema::hasIndex('servers', 'game_servers_slug_unique')) {
-                Schema::table('servers', function (Blueprint $table) {
-                    $table->renameIndex('game_servers_slug_unique', 'servers_slug_unique');
-                });
-            }
-
+            $this->upgradeExistingTables();
             DB::table('migrations')->whereIn('migration', self::REPLACED)->delete();
 
             return;
@@ -63,7 +57,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('server_user', function (Blueprint $table) {
+        Schema::create('players', function (Blueprint $table) {
             $table->id();
             $table->foreignId('server_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
@@ -74,11 +68,40 @@ return new class extends Migration
     }
 
     /**
+     * Brings tables made by the replaced migrations to this migration's
+     * shape, keeping their rows.
+     */
+    private function upgradeExistingTables(): void
+    {
+        if (Schema::hasIndex('servers', 'game_servers_slug_unique')) {
+            Schema::table('servers', function (Blueprint $table) {
+                $table->renameIndex('game_servers_slug_unique', 'servers_slug_unique');
+            });
+        }
+
+        if (Schema::hasTable('server_user')) {
+            Schema::table('server_user', function (Blueprint $table) {
+                $table->dropForeign(['server_id']);
+                $table->dropForeign(['user_id']);
+                $table->dropUnique(['server_id', 'user_id']);
+            });
+
+            Schema::rename('server_user', 'players');
+
+            Schema::table('players', function (Blueprint $table) {
+                $table->foreign('server_id')->references('id')->on('servers')->cascadeOnDelete();
+                $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+                $table->unique(['server_id', 'user_id']);
+            });
+        }
+    }
+
+    /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('server_user');
+        Schema::dropIfExists('players');
         Schema::dropIfExists('servers');
     }
 };
