@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use App\Models\User;
 use App\Support\PlayToken;
 use Illuminate\Console\Attributes\Description;
@@ -28,7 +28,7 @@ class IssueDevPlayToken extends Command
         }
 
         $user = User::query()->where('email', $this->argument('email'))->first();
-        $server = GameServer::query()->where('slug', $this->argument('server'))->first();
+        $server = Server::query()->where('slug', $this->argument('server'))->first();
 
         if ($user === null || ! $user->hasVerifiedEmail()) {
             $this->error('No verified user with that email.');

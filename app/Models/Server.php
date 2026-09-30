@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use Database\Factories\GameServerFactory;
+use App\Support\Constellations;
+use Database\Factories\ServerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,9 +18,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 #[Fillable(['slug', 'name', 'nakama_host', 'nakama_port', 'nakama_ssl', 'nakama_server_key', 'internal_url', 'play_token_secret', 'http_key', 'is_open', 'sort'])]
 #[Hidden(['play_token_secret', 'http_key'])]
-class GameServer extends Model
+class Server extends Model
 {
-    /** @use HasFactory<GameServerFactory> */
+    /** @use HasFactory<ServerFactory> */
     use HasFactory;
 
     /**
@@ -39,6 +40,19 @@ class GameServer extends Model
         ];
     }
 
+    /**
+     * A server created without a name gets a random constellation's, one no
+     * other server has.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Server $server): void {
+            if (blank($server->name)) {
+                $server->name = Constellations::unusedName(static::query()->pluck('name')->all());
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -53,7 +67,7 @@ class GameServer extends Model
     }
 
     /**
-     * @param  Builder<GameServer>  $query
+     * @param  Builder<Server>  $query
      */
     public function scopeOpen(Builder $query): void
     {

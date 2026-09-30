@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 #[Signature('galaxy:server
     {slug : Short, permanent ID; also the Nakama SERVER_ID}
-    {--name= : Display name}
+    {--name= : Display name (a new server gets a random constellation name if omitted)}
     {--host= : Nakama host, e.g. api1.fig.limited}
     {--port= : Nakama port (a new server defaults to 443)}
     {--insecure : Nakama is plain http/ws (local development)}
@@ -22,14 +22,14 @@ use Illuminate\Support\Str;
     {--closed : Stop accepting players}
     {--open : Accept players again}')]
 #[Description('Add or update a game server (a Nakama deployment players can join). Updates change only the options given.')]
-class RegisterGameServer extends Command
+class RegisterServer extends Command
 {
     /**
      * Execute the console command.
      */
     public function handle(): int
     {
-        $server = GameServer::query()->firstOrNew(['slug' => $this->argument('slug')]);
+        $server = Server::query()->firstOrNew(['slug' => $this->argument('slug')]);
         $isNew = ! $server->exists;
 
         $attributes = array_filter([
@@ -72,8 +72,6 @@ class RegisterGameServer extends Command
                     return self::FAILURE;
                 }
             }
-
-            $server->name ??= Str::headline($server->slug);
 
             if (blank($server->play_token_secret)) {
                 $server->play_token_secret = $generatedSecret = Str::random(64);

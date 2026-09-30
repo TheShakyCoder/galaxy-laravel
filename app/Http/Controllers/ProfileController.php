@@ -55,7 +55,7 @@ class ProfileController extends Controller
         // Their pilots and progress on every game server go too. A server
         // that can't be reached keeps an orphaned game account (logged); no
         // one can sign in to it without this site.
-        foreach ($user->gameServers as $server) {
+        foreach ($user->servers as $server) {
             $nakama->deletePlayer($server, $user->uuid);
         }
 

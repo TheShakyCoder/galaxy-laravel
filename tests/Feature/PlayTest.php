@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\GameServer;
+use App\Models\Server;
 use App\Models\User;
 
 /**
@@ -38,7 +38,7 @@ test('the play gate answers 401 without redirecting guests or unverified users',
 test('a play token identifies the user to the chosen server', function () {
     $this->freezeTime();
     $user = User::factory()->create(['name' => 'Starbuck']);
-    $server = GameServer::factory()->create(['slug' => 'api1', 'nakama_host' => 'api1.fig.limited']);
+    $server = Server::factory()->create(['slug' => 'api1', 'nakama_host' => 'api1.fig.limited']);
 
     $response = $this->actingAs($user)->getJson(route('play.token'));
 
@@ -53,11 +53,11 @@ test('a play token identifies the user to the chosen server', function () {
         'name' => 'Starbuck',
         'exp' => now()->getTimestamp() + config('galaxy.play_token_ttl'),
     ]);
-    $this->assertDatabaseHas('game_server_user', ['user_id' => $user->id, 'game_server_id' => $server->id]);
+    $this->assertDatabaseHas('server_user', ['user_id' => $user->id, 'server_id' => $server->id]);
 });
 
 test('a play token is refused to guests and unverified users', function (?User $user) {
-    GameServer::factory()->create();
+    Server::factory()->create();
 
     if ($user) {
         $this->actingAs($user);
@@ -73,7 +73,7 @@ test('a play token is refused to guests and unverified users', function (?User $
 ]);
 
 test('with several open servers the player must choose one before getting a token', function () {
-    GameServer::factory()->count(2)->create();
+    Server::factory()->count(2)->create();
 
     $this->actingAs(User::factory()->create())
         ->getJson(route('play.token'))
@@ -83,8 +83,8 @@ test('with several open servers the player must choose one before getting a toke
 
 test('choosing a server sends the player to the game with a token for that server', function () {
     $user = User::factory()->create();
-    GameServer::factory()->create(['slug' => 'alpha']);
-    $beta = GameServer::factory()->create(['slug' => 'beta']);
+    Server::factory()->create(['slug' => 'alpha']);
+    $beta = Server::factory()->create(['slug' => 'beta']);
 
     $this->actingAs($user)->get(route('play'))
         ->assertInertia(fn ($page) => $page->component('Play/Servers')->has('servers', 2));
@@ -96,8 +96,8 @@ test('choosing a server sends the player to the game with a token for that serve
 });
 
 test('with one open server play goes straight to the game', function () {
-    GameServer::factory()->create();
-    GameServer::factory()->closed()->create();
+    Server::factory()->create();
+    Server::factory()->closed()->create();
 
     $this->actingAs(User::factory()->create())
         ->get(route('play'))
@@ -105,7 +105,7 @@ test('with one open server play goes straight to the game', function () {
 });
 
 test('a closed server cannot be chosen', function () {
-    $server = GameServer::factory()->closed()->create();
+    $server = Server::factory()->closed()->create();
 
     $this->actingAs(User::factory()->create())
         ->post(route('play.select', $server))
@@ -113,7 +113,7 @@ test('a closed server cannot be chosen', function () {
 });
 
 test('unverified users are sent to verify their email instead of playing', function () {
-    GameServer::factory()->create();
+    Server::factory()->create();
 
     $this->actingAs(User::factory()->unverified()->create())
         ->get(route('play'))

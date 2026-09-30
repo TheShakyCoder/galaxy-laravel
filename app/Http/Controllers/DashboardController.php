@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use App\Services\NakamaClient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,8 +19,8 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        $servers = $user->gameServers()->orderBy('sort')->orderBy('name')->get()
-            ->map(function (GameServer $server) use ($nakama, $user) {
+        $servers = $user->servers()->orderBy('sort')->orderBy('name')->get()
+            ->map(function (Server $server) use ($nakama, $user) {
                 $summaries = $nakama->playerSummaries($server, [$user->uuid]);
 
                 return [
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             });
 
         return Inertia::render('Dashboard', [
-            'canPlay' => GameServer::query()->open()->exists(),
+            'canPlay' => Server::query()->open()->exists(),
             'servers' => $servers,
         ]);
     }

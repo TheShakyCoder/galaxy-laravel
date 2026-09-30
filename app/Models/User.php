@@ -46,10 +46,10 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * The game servers this user has played on.
      *
-     * @return BelongsToMany<GameServer, $this>
+     * @return BelongsToMany<Server, $this>
      */
-    public function gameServers(): BelongsToMany
+    public function servers(): BelongsToMany
     {
-        return $this->belongsToMany(GameServer::class)->withPivot('first_played_at', 'last_played_at');
+        return $this->belongsToMany(Server::class)->withPivot('first_played_at', 'last_played_at');
     }
 }

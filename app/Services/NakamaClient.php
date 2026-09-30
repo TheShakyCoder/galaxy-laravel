@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
@@ -22,7 +22,7 @@ class NakamaClient
      * @param  list<string>  $uuids
      * @return array<string, array<string, mixed>>|null
      */
-    public function playerSummaries(GameServer $server, array $uuids): ?array
+    public function playerSummaries(Server $server, array $uuids): ?array
     {
         try {
             return $this->rpc($server, 'player_summary', ['user_ids' => $uuids])['players'] ?? [];
@@ -37,7 +37,7 @@ class NakamaClient
      * Deletes the user's account and game data on $server. Returns false if
      * the server couldn't be reached or refused.
      */
-    public function deletePlayer(GameServer $server, string $uuid): bool
+    public function deletePlayer(Server $server, string $uuid): bool
     {
         try {
             $this->rpc($server, 'delete_player', ['user_id' => $uuid]);
@@ -57,7 +57,7 @@ class NakamaClient
      * @throws ConnectionException
      * @throws RequestException
      */
-    private function rpc(GameServer $server, string $id, array $payload): array
+    private function rpc(Server $server, string $id, array $payload): array
     {
         return Http::baseUrl($server->apiUrl())
             ->timeout(5)

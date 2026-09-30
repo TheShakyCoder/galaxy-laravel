@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -17,7 +17,7 @@ class PlayToken
     /**
      * @return array{token: string, claims: array{sub: string, aud: string, name: string, iat: int, exp: int, jti: string}}
      */
-    public static function issue(User $user, GameServer $server, int $ttlSeconds): array
+    public static function issue(User $user, Server $server, int $ttlSeconds): array
     {
         $now = now()->getTimestamp();
         $claims = [

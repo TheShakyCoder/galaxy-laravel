@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GameServer;
+use App\Models\Server;
 use App\Models\User;
 use App\Support\PlayToken;
 use Illuminate\Http\JsonResponse;
@@ -26,21 +26,21 @@ class PlayController extends Controller
      */
     public function index(Request $request): SymfonyResponse|InertiaResponse
     {
-        $servers = GameServer::query()->open()->get();
+        $servers = Server::query()->open()->get();
 
         if ($servers->count() === 1) {
             return $this->play($request, $servers->first());
         }
 
         return Inertia::render('Play/Servers', [
-            'servers' => $servers->map(fn (GameServer $server) => [
+            'servers' => $servers->map(fn (Server $server) => [
                 'slug' => $server->slug,
                 'name' => $server->name,
             ]),
         ]);
     }
 
-    public function select(Request $request, GameServer $server): SymfonyResponse
+    public function select(Request $request, Server $server): SymfonyResponse
     {
         abort_unless($server->is_open, 404);
 
@@ -96,7 +96,7 @@ class PlayController extends Controller
      * Remember the choice (read back by token()) and leave for the game site.
      * Inertia::location works for Inertia visits and plain requests alike.
      */
-    private function play(Request $request, GameServer $server): SymfonyResponse
+    private function play(Request $request, Server $server): SymfonyResponse
     {
         $request->session()->put(self::SESSION_KEY, $server->slug);
 
@@ -111,27 +111,27 @@ class PlayController extends Controller
     /**
      * The server picked on this site, or the only open one.
      */
-    private function chosenServer(Request $request): ?GameServer
+    private function chosenServer(Request $request): ?Server
     {
         $slug = $request->session()->get(self::SESSION_KEY);
 
         if ($slug !== null) {
-            return GameServer::query()->open()->where('slug', $slug)->first();
+            return Server::query()->open()->where('slug', $slug)->first();
         }
 
-        $open = GameServer::query()->open()->limit(2)->get();
+        $open = Server::query()->open()->limit(2)->get();
 
         return $open->count() === 1 ? $open->first() : null;
     }
 
-    private function recordVisit(User $user, GameServer $server): void
+    private function recordVisit(User $user, Server $server): void
     {
         $now = now();
 
-        if ($user->gameServers()->whereKey($server->getKey())->exists()) {
-            $user->gameServers()->updateExistingPivot($server->getKey(), ['last_played_at' => $now]);
+        if ($user->servers()->whereKey($server->getKey())->exists()) {
+            $user->servers()->updateExistingPivot($server->getKey(), ['last_played_at' => $now]);
         } else {
-            $user->gameServers()->attach($server->getKey(), ['first_played_at' => $now, 'last_played_at' => $now]);
+            $user->servers()->attach($server->getKey(), ['first_played_at' => $now, 'last_played_at' => $now]);
         }
     }
 }
