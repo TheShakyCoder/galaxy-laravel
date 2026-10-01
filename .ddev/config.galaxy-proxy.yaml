@@ -1,0 +1,13 @@
+# Local-only development routes for the sibling Galaxy game project.
+web_environment:
+  - GALAXY_PLAY_URL=https://galaxy.ddev.site:8765
+  - SESSION_DOMAIN=.ddev.site
+web_extra_exposed_ports:
+  - name: galaxy-game
+    container_port: 8765
+    http_port: 8764
+    https_port: 8765
+  - name: galaxy-nakama
+    container_port: 8749
+    http_port: 7353
+    https_port: 7354

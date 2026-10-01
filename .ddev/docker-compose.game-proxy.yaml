@@ -1,0 +1,6 @@
+services:
+  web:
+    volumes:
+      - ../../Galaxy/build/default_html5/__htmlLaunchDir/Galaxy:/var/www/galaxy-game:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
