@@ -1,0 +1,78 @@
+# The local Nakama game server (and the Postgres it needs) runs inside this
+# DDEV project, so `ddev start` / `ddev stop` / `ddev restart` /
+# `ddev logs -s nakama` manage the whole stack alongside the website, and
+# the website's nginx reaches it by service name on the DDEV network
+# (nakama:7350, nakama:7351) - no host ports, no host.docker.internal.
+#
+# Mirrors Galaxy/nakama-server/docker-compose.yml, which stays as the
+# standalone/deployment copy. The local dev secrets below must keep
+# matching the website's `local` game server row, i.e.
+#   php artisan galaxy:server local --host=nakama.ddev.site --port=443 \
+#     --secure --internal-url=http://nakama:7350 \
+#     --http-key=local-dev-http-key --secret=local-dev-play-token-secret
+services:
+  nakama-postgres:
+    container_name: ddev-${DDEV_SITENAME}-nakama-postgres
+    image: postgres:16.8-alpine
+    environment:
+      - POSTGRES_DB=nakama
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-localdb}
+    volumes:
+      - nakama-postgres-data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "nakama"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      # First start runs initdb, which takes a while (and longer still on
+      # images without system locales) - failures during this window don't
+      # count, so the service doesn't come up "unhealthy" mid-initialisation.
+      start_period: 60s
+  nakama:
+    container_name: ddev-${DDEV_SITENAME}-nakama
+    image: registry.heroiclabs.com/heroiclabs/nakama:3.37.0
+    environment:
+      # Same value for both services (this is the password Nakama itself
+      # uses to reach postgres).
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-localdb}
+      # Play tokens from the website (modules/auth.lua) - must match that
+      # server row's `play_token_secret`.
+      - PLAY_TOKEN_SECRET=${PLAY_TOKEN_SECRET:-local-dev-play-token-secret}
+      - SERVER_ID=${SERVER_ID:-local}
+      # Server-to-server calls from the website (modules/players.lua) -
+      # must match that row's `http_key`.
+      - NAKAMA_HTTP_KEY=${NAKAMA_HTTP_KEY:-local-dev-http-key}
+      # Star-system matches (modules/directory.lua, tickets.lua, registry.lua).
+      - TICKET_SECRET=${TICKET_SECRET:-local-dev-ticket-secret}
+      - NODE_ID=${NODE_ID:-node1}
+      - PUBLIC_ENDPOINT=${PUBLIC_ENDPOINT:-}
+    entrypoint:
+      - "/bin/sh"
+      # -e only, not -x: tracing would print the secrets into the logs.
+      - "-ec"
+      - >
+          /nakama/nakama migrate up --database.address postgres:$$POSTGRES_PASSWORD@nakama-postgres:5432/nakama &&
+          exec /nakama/nakama --name nakama1 --database.address postgres:$$POSTGRES_PASSWORD@nakama-postgres:5432/nakama --logger.level DEBUG --session.token_expiry_sec 7200 --runtime.http_key "$$NAKAMA_HTTP_KEY" --runtime.env "PLAY_TOKEN_SECRET=$$PLAY_TOKEN_SECRET" --runtime.env "SERVER_ID=$$SERVER_ID" --runtime.env "TICKET_SECRET=$$TICKET_SECRET" --runtime.env "NODE_ID=$$NODE_ID" --runtime.env "PUBLIC_ENDPOINT=$$PUBLIC_ENDPOINT"
+    volumes:
+      # The sibling Galaxy project's server directory: modules/ (the Lua
+      # runtime) and .env, same mount the standalone compose uses.
+      - ../../Galaxy/nakama-server:/nakama/data
+    expose:
+      - "7349"
+      - "7350"
+      - "7351"
+    restart: "no"
+    depends_on:
+      nakama-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/nakama/nakama", "healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+volumes:
+  nakama-postgres-data: {}
