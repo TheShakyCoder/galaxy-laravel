@@ -12,7 +12,7 @@ test('the dashboard shows the player\'s pilot on each server they joined', funct
     $user->servers()->attach($server, ['first_played_at' => now(), 'last_played_at' => now()]);
     Http::fake([
         'https://api1.test/v2/rpc/player_summary*' => Http::response(['players' => [
-            $user->uuid => ['faction_name' => 'The Swarm', 'ship_name' => 'Patrol Interceptor', 'scrip' => 1000, 'hydrogen' => 5000, 'system_name' => 'Polaris'],
+            $user->uuid => ['faction_name' => 'The Swarm', 'ship_name' => 'Patrol Interceptor', 'scrip' => 1000, 'hydrogen' => 5000, 'system_name' => 'Polaris', 'xp' => 16000, 'level' => 5, 'rank' => 'Glider'],
         ]]),
     ]);
 
@@ -23,7 +23,9 @@ test('the dashboard shows the player\'s pilot on each server they joined', funct
             ->where('servers.0.name', 'Api One')
             ->where('servers.0.reachable', true)
             ->where('servers.0.summary.faction_name', 'The Swarm')
-            ->where('servers.0.summary.scrip', 1000));
+            ->where('servers.0.summary.scrip', 1000)
+            ->where('servers.0.summary.rank', 'Glider')
+            ->where('servers.0.summary.level', 5));
 
     Http::assertSent(fn (Request $request) => $request['user_ids'] === [$user->uuid]
         && str_contains($request->url(), 'http_key=the-http-key'));

@@ -88,6 +88,28 @@ const formatNumber = (value) =>
                     >
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">
+                                Rank
+                            </dt>
+                            <dd class="text-gray-900 dark:text-gray-100">
+                                {{ server.summary.rank ?? '—' }}
+                                <span
+                                    v-if="server.summary.level"
+                                    class="text-gray-500 dark:text-gray-400"
+                                >
+                                    (level {{ server.summary.level }})
+                                </span>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-gray-500 dark:text-gray-400">
+                                XP
+                            </dt>
+                            <dd class="text-gray-900 dark:text-gray-100">
+                                {{ formatNumber(server.summary.xp) }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-gray-500 dark:text-gray-400">
                                 Faction
                             </dt>
                             <dd class="text-gray-900 dark:text-gray-100">
