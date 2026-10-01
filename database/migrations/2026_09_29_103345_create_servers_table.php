@@ -4,12 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
+        // Databases migrated before the servers and players tables were
+        // split into one migration each (2026-10-01) already have this table.
+        if (Schema::hasTable('servers')) {
+            return;
+        }
+
         Schema::create('servers', function (Blueprint $table) {
             $table->id();
             $table->string('slug')->unique();
