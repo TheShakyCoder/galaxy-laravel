@@ -1,0 +1,954 @@
+.command-theme {
+    --command-bg: #0b111a;
+    --command-panel: #111b27;
+    --command-panel-soft: #14212e;
+    --command-line: #243242;
+    --command-text: #eaf0f6;
+    --command-muted: #95a6b8;
+    --command-accent: #74e4d3;
+    min-height: 100vh;
+    background: var(--command-bg);
+    color: var(--command-text);
+    font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+.command-theme *,
+.command-theme *::before,
+.command-theme *::after {
+    box-sizing: border-box;
+}
+.command-theme :is(a, button):focus-visible {
+    outline: 2px solid var(--command-accent);
+    outline-offset: 5px;
+}
+.command-theme h1,
+.command-theme h2,
+.command-theme h3,
+.command-theme h4,
+.command-theme dd {
+    overflow-wrap: anywhere;
+}
+.command-muted {
+    color: var(--command-muted);
+}
+.command-skip {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 50;
+    padding: 12px 18px;
+    transform: translateY(-160%);
+    background: #74e4d3;
+    color: #09252a;
+}
+.command-skip:focus {
+    transform: translateY(0);
+}
+.command-rail {
+    background: #0b141e;
+    color: #eaf0f6;
+    padding: 28px 20px 0;
+    border-right: 1px solid #243242;
+}
+.command-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    padding: 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+}
+.command-brand small {
+    display: block;
+    margin-top: 3px;
+    color: #8fa5b6;
+    font-size: 8px;
+    letter-spacing: 0.23em;
+    font-weight: 500;
+}
+.command-navigation {
+    flex: 1;
+    flex-direction: column;
+    padding-top: 48px;
+}
+.command-nav-caption {
+    margin: 0 14px 18px;
+    color: #8296aa;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+}
+.command-nav-link {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    color: #a6b6c6;
+    font-size: 13px;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+.command-nav-link:hover {
+    background: #142431;
+    color: #eaf0f6;
+}
+.command-nav-link.is-active {
+    background: #142e35;
+    border-color: #21454a;
+    color: #85e9d9;
+}
+.command-rail-bottom {
+    margin-top: auto;
+    padding-top: 64px;
+}
+.command-rail-note {
+    padding: 22px 14px 30px;
+}
+.command-rail-note p {
+    font-size: 19px;
+    line-height: 1.4;
+    letter-spacing: -0.035em;
+}
+.command-rail-note span {
+    display: block;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #8fa5b6;
+}
+.command-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 0;
+    border-top: 1px solid #243242;
+}
+.command-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #34555b;
+    border-radius: 50%;
+    color: #a8eee0;
+    background: #173038;
+    font-size: 12px;
+    font-weight: 600;
+}
+.command-avatar.small {
+    width: 31px;
+    height: 31px;
+    font-size: 10px;
+}
+.command-menu {
+    padding: 9px;
+    border-radius: 6px;
+    color: #adc0cf;
+}
+.command-menu:hover {
+    color: white;
+    background: #203442;
+}
+.command-workspace {
+    min-width: 0;
+}
+.command-topbar {
+    height: 76px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--command-line);
+}
+.command-account-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--command-muted);
+}
+.command-main {
+    max-width: 1440px;
+    margin: auto;
+    padding: 36px 40px 48px;
+}
+.command-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 28px;
+}
+.command-eyebrow {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.17em;
+    line-height: 1.7;
+    color: var(--command-muted);
+}
+.command-heading h1 {
+    margin-top: 9px;
+    font-size: clamp(23px, 2.2vw, 31px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.25;
+}
+.command-heading h1 span {
+    color: var(--command-accent);
+}
+.command-heading-mark {
+    color: var(--command-muted);
+    border: 1px solid var(--command-line);
+    border-radius: 50%;
+    padding: 14px;
+}
+.command-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 344px;
+    background: radial-gradient(
+        ellipse at 83% 50%,
+        #124450 0,
+        #0f2636 33%,
+        #101e2c 66%
+    );
+    border: 1px solid #2b4654;
+    border-radius: 12px;
+    color: #edf5fa;
+}
+.command-starfield {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.48;
+    background-image:
+        radial-gradient(1px 1px at 15% 22%, #c9ffff 80%, transparent),
+        radial-gradient(1px 1px at 74% 32%, #bcefff 80%, transparent),
+        radial-gradient(1px 1px at 42% 72%, #bcefff 80%, transparent),
+        radial-gradient(1px 1px at 91% 60%, #fff 80%, transparent);
+    background-size:
+        137px 151px,
+        229px 203px,
+        291px 277px,
+        337px 219px;
+}
+.command-hero-copy {
+    position: relative;
+    z-index: 2;
+    width: 57%;
+    padding: 35px 38px 38px;
+}
+.command-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 6px 8px;
+    border: 1px solid #34585b;
+    background: #153436;
+    color: #8bedd6;
+}
+.command-status.is-neutral {
+    border-color: #596473;
+    background: #293747;
+    color: #d2dae4;
+}
+.command-status-dot {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: currentColor;
+}
+.command-hero h2 {
+    font-size: clamp(28px, 3.3vw, 46px);
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 1.1;
+    margin-top: 20px;
+}
+.command-hero h2 span {
+    color: #76e2d0;
+}
+.command-hero-copy > p {
+    max-width: 335px;
+    font-size: 12px;
+    line-height: 1.85;
+    color: #afc3d2;
+    margin-top: 16px;
+}
+.command-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    padding: 13px 18px;
+    border: 1px solid #89eee0;
+    border-radius: 5px;
+    background: #80e2cf;
+    color: #0b2b2f;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        background 0.15s,
+        box-shadow 0.15s;
+}
+.command-button:hover:not(:disabled) {
+    background: #adf5e7;
+    box-shadow: 0 0 24px #6be1cb24;
+}
+.command-button:disabled {
+    cursor: not-allowed;
+    background: #344c50;
+    color: #bbcbce;
+    border-color: #50696b;
+}
+.command-hero-link {
+    font-size: 11px;
+    color: #b9cbd9;
+}
+.command-hero-link:hover {
+    color: white;
+}
+.command-hero-link span {
+    margin-left: 8px;
+    color: #80e2cf;
+}
+.command-hero-art {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 52%;
+    height: 100%;
+    pointer-events: none;
+}
+.command-hero-art img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 94%;
+    object-fit: contain;
+    transform: rotate(8deg) scale(1.08);
+    filter: drop-shadow(0 18px 26px #0007);
+}
+.command-orbit {
+    position: absolute;
+    width: 290px;
+    height: 290px;
+    border: 1px solid #72ccda24;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow:
+        0 0 0 38px #70cad808,
+        0 0 0 39px #72ccda12,
+        0 0 0 76px #70cad805,
+        0 0 0 77px #72ccda0c;
+}
+.command-ship-caption {
+    position: absolute;
+    bottom: 23px;
+    right: 27px;
+    text-align: right;
+}
+.command-ship-caption span {
+    display: block;
+    font-size: 7px;
+    letter-spacing: 0.18em;
+    color: #b4cad5;
+}
+.command-ship-caption strong {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    font-weight: 500;
+    margin: 4px 0;
+}
+.command-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 21px 0 34px;
+    border: 1px solid var(--command-line);
+    border-radius: 9px;
+    background: var(--command-panel);
+}
+.command-stats > div {
+    position: relative;
+    padding: 22px 23px;
+}
+.command-stats > div + div {
+    border-left: 1px solid var(--command-line);
+}
+.command-stats dt {
+    color: var(--command-muted);
+    font-size: 11px;
+}
+.command-stats dd {
+    font-size: 27px;
+    font-weight: 500;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+.command-stats small {
+    font-size: 9px;
+    color: var(--command-muted);
+    font-weight: 400;
+    margin-left: 11px;
+}
+.command-stat-icon {
+    position: absolute;
+    top: 24px;
+    right: 23px;
+    width: 18px;
+    height: 18px;
+    color: var(--command-muted);
+}
+.command-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 25px;
+}
+.command-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 17px;
+    min-height: 46px;
+}
+.command-section-heading h2 {
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    margin-top: 3px;
+}
+.command-count {
+    border: 1px solid var(--command-line);
+    border-radius: 4px;
+    color: var(--command-muted);
+    font-size: 10px;
+    padding: 4px 8px;
+    white-space: nowrap;
+}
+.command-panel {
+    background: var(--command-panel);
+    border: 1px solid var(--command-line);
+    border-radius: 9px;
+    overflow: hidden;
+}
+.command-pilot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 21px;
+    border-bottom: 1px solid var(--command-line);
+}
+.command-pilot-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.command-pilot-header h3 svg {
+    color: var(--command-muted);
+}
+.command-server-state {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--command-accent);
+}
+.command-server-state.is-closed {
+    color: var(--command-muted);
+}
+.command-pilot-body {
+    padding: 18px 21px;
+}
+.command-pilot-faction {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+.command-pilot-faction img,
+.command-unknown-faction {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+.command-unknown-faction {
+    display: grid;
+    place-items: center;
+    color: var(--command-muted);
+}
+.command-pilot-faction .command-eyebrow {
+    color: var(--command-accent);
+    font-size: 8px;
+}
+.command-pilot[data-faction='swarm'] .command-pilot-faction .command-eyebrow {
+    color: #f2ae89;
+}
+.command-pilot-faction h4 {
+    font-size: 19px;
+    font-weight: 500;
+    margin-top: 2px;
+}
+.command-flight-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 18px;
+    padding-top: 17px;
+    border-top: 1px solid var(--command-line);
+}
+.command-flight-details dt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--command-muted);
+}
+.command-flight-details dd {
+    font-size: 12px;
+    margin-top: 6px;
+    font-weight: 500;
+}
+.command-pilot-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 21px;
+    border-top: 1px solid var(--command-line);
+    background: var(--command-panel-soft);
+}
+.command-balances {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    min-width: 0;
+}
+.command-balances dt,
+.command-last-played {
+    font-size: 9px;
+    color: var(--command-muted);
+}
+.command-balances dd {
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    margin-top: 4px;
+    font-weight: 500;
+}
+.command-last-played {
+    text-align: right;
+}
+.command-last-played time {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+}
+.command-pilot-notice {
+    display: flex;
+    gap: 16px;
+    padding: 28px 21px;
+    color: var(--command-muted);
+}
+.command-pilot-notice h4 {
+    font-size: 14px;
+    color: var(--command-text);
+    font-weight: 500;
+}
+.command-pilot-notice p {
+    font-size: 12px;
+    margin-top: 6px;
+    line-height: 1.7;
+}
+.command-roster-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 16px;
+    color: var(--command-muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+.command-factions {
+    display: grid;
+    gap: 13px;
+}
+.command-faction {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3px;
+    padding: 22px 0 22px 20px;
+    min-height: 166px;
+    border: 1px solid #2b4850;
+    border-radius: 9px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at right, #1b5058, #112733 68%);
+    color: #eaf5f5;
+}
+.command-faction.swarm {
+    border-color: #533b37;
+    background: radial-gradient(ellipse at right, #573128, #292229 68%);
+}
+.command-faction > div {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+.command-faction-index {
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    color: #8dd5cc;
+}
+.command-faction.swarm .command-faction-index {
+    color: #edb092;
+}
+.command-faction h3 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 10px;
+    letter-spacing: -0.035em;
+}
+.command-faction p {
+    font-size: 10px;
+    color: #bed0d5;
+    line-height: 1.8;
+    margin-top: 7px;
+}
+.command-faction img {
+    width: 138px;
+    height: 138px;
+    object-fit: contain;
+    margin-right: -5px;
+}
+.command-field-note {
+    padding: 25px 4px 0;
+}
+.command-field-note h3 {
+    font-size: 14px;
+    margin-top: 9px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+.command-field-note p {
+    color: var(--command-muted);
+    font-size: 11px;
+    line-height: 1.85;
+    margin-top: 8px;
+}
+.command-empty {
+    padding: 44px 28px;
+    text-align: center;
+    color: var(--command-muted);
+}
+.command-empty h2,
+.command-empty h3 {
+    color: var(--command-text);
+    font-size: 21px;
+    font-weight: 500;
+}
+.command-empty p {
+    font-size: 13px;
+    max-width: 350px;
+    margin: 12px auto 0;
+    line-height: 1.8;
+}
+.command-footer {
+    max-width: 1440px;
+    margin: auto;
+    padding: 20px 40px 28px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid var(--command-line);
+    font-size: 9px;
+    color: var(--command-muted);
+}
+.command-footer > span:first-child {
+    font-size: 8px;
+    letter-spacing: 0.13em;
+}
+.command-footer > span:first-child span {
+    margin: 0 6px;
+}
+.command-launch-list {
+    display: grid;
+    gap: 16px;
+    max-width: 900px;
+}
+.command-destination {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 26px;
+}
+.command-destination-number {
+    font-size: 28px;
+    color: var(--command-muted);
+    font-weight: 300;
+}
+.command-destination h2 {
+    font-size: 22px;
+    margin-top: 6px;
+    letter-spacing: -0.025em;
+    font-weight: 500;
+}
+@media (min-width: 1024px) {
+    .command-rail {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 226px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .command-workspace {
+        margin-left: 226px;
+    }
+}
+@media (max-width: 1279px) {
+    .command-main {
+        padding: 30px 26px 40px;
+    }
+    .command-topbar {
+        padding: 0 26px;
+    }
+    .command-content-grid {
+        grid-template-columns: minmax(0, 1fr) 260px;
+        gap: 20px;
+    }
+    .command-hero-copy {
+        padding: 30px;
+    }
+    .command-stats small {
+        display: block;
+        margin: 4px 0 0;
+    }
+    .command-faction img {
+        width: 116px;
+        height: 116px;
+    }
+}
+@media (max-width: 1023px) {
+    .command-rail {
+        padding: 20px 26px;
+    }
+    .command-navigation {
+        padding-top: 24px;
+    }
+    .command-rail-bottom {
+        padding-top: 20px;
+    }
+    .command-rail-note {
+        display: none;
+    }
+    .command-identity {
+        padding-bottom: 0;
+    }
+    .command-topbar {
+        height: 62px;
+    }
+}
+@media (max-width: 767px) {
+    .command-content-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+    }
+    .command-factions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .command-faction {
+        padding-left: 16px;
+    }
+    .command-faction img {
+        width: 110px;
+        height: 110px;
+    }
+    .command-field-note {
+        padding-top: 20px;
+    }
+    .command-hero-copy {
+        width: 64%;
+    }
+    .command-hero-art {
+        width: 48%;
+        right: -4%;
+    }
+    .command-heading-mark {
+        display: none;
+    }
+}
+@media (max-width: 539px) {
+    .command-main {
+        padding: 26px 18px 32px;
+    }
+    .command-rail {
+        padding: 17px 18px;
+    }
+    .command-topbar {
+        padding: 0 18px;
+        height: 55px;
+    }
+    .command-brand {
+        padding: 0;
+        font-size: 20px;
+    }
+    .command-heading {
+        margin-bottom: 23px;
+    }
+    .command-hero {
+        min-height: 480px;
+    }
+    .command-hero-copy {
+        width: 100%;
+        padding: 25px 24px;
+    }
+    .command-hero h2 {
+        font-size: 34px;
+    }
+    .command-hero-copy > p {
+        max-width: 290px;
+    }
+    .command-hero-art {
+        top: auto;
+        bottom: 0;
+        right: -5%;
+        height: 190px;
+        width: 82%;
+        z-index: -1;
+    }
+    .command-hero-art img {
+        inset: -4px auto auto 0;
+        height: 105%;
+    }
+    .command-orbit {
+        width: 180px;
+        height: 180px;
+    }
+    .command-ship-caption {
+        bottom: 15px;
+        right: 27px;
+    }
+    .command-ship-caption span {
+        font-size: 6px;
+    }
+    .command-stats {
+        margin: 16px 0 28px;
+    }
+    .command-stats > div {
+        padding: 16px 12px;
+    }
+    .command-stat-icon {
+        display: none;
+    }
+    .command-stats dt {
+        font-size: 9px;
+        line-height: 1.6;
+        min-height: 29px;
+    }
+    .command-stats dd {
+        font-size: 23px;
+    }
+    .command-stats small {
+        font-size: 8px;
+        line-height: 1.5;
+    }
+    .command-pilot-header,
+    .command-pilot-body,
+    .command-pilot-bottom {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    .command-pilot-bottom {
+        align-items: start;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .command-balances {
+        width: 100%;
+        gap: 20px;
+    }
+    .command-last-played {
+        display: flex;
+        gap: 8px;
+        text-align: left;
+        flex-wrap: wrap;
+    }
+    .command-last-played time {
+        margin: 0;
+        font-size: 9px;
+    }
+    .command-factions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .command-faction {
+        padding-left: 24px;
+        min-height: 154px;
+    }
+    .command-faction img {
+        width: 144px;
+        height: 144px;
+        margin-right: 10px;
+    }
+    .command-footer {
+        padding: 20px 18px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .command-destination {
+        gap: 15px;
+        padding: 20px 16px;
+        flex-wrap: wrap;
+    }
+    .command-destination h2 {
+        font-size: 18px;
+    }
+    .command-destination .command-button {
+        width: 100%;
+    }
+}
+@media (prefers-color-scheme: light) {
+    .command-theme {
+        --command-bg: #f0f4f7;
+        --command-panel: #fff;
+        --command-panel-soft: #f6f9fb;
+        --command-line: #d8e1e8;
+        --command-text: #172d3f;
+        --command-muted: #526b7e;
+        --command-accent: #107266;
+    }
+    .command-pilot[data-faction='swarm']
+        .command-pilot-faction
+        .command-eyebrow {
+        color: #9a4624;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .command-theme *,
+    .command-theme *::before,
+    .command-theme *::after {
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
