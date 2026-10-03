@@ -326,11 +326,11 @@ const faction = (name) => factions.get(name?.toLowerCase()) ?? null;
                             <div class="command-pilot-bottom">
                                 <dl class="command-balances">
                                     <div>
-                                        <dt>Scrip</dt>
+                                        <dt>Tope</dt>
                                         <dd>
                                             {{
                                                 formatNumber(
-                                                    server.summary.scrip,
+                                                    server.summary.tope,
                                                 )
                                             }}
                                         </dd>
