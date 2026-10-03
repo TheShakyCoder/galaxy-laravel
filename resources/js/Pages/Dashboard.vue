@@ -134,10 +134,10 @@ const formatNumber = (value) =>
                         </div>
                         <div>
                             <dt class="text-gray-500 dark:text-gray-400">
-                                Scrip
+                                Tope
                             </dt>
                             <dd class="text-gray-900 dark:text-gray-100">
-                                {{ formatNumber(server.summary.scrip) }}
+                                {{ formatNumber(server.summary.tope) }}
                             </dd>
                         </div>
                         <div>
