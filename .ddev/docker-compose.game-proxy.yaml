@@ -1,4 +1,10 @@
+# Mount the whole stable build directory, NOT the editor's
+# build/default_html5/__htmlLaunchDir/Galaxy folder. Defold's "Build HTML5"
+# deletes and re-creates __htmlLaunchDir on every build, which changes its
+# inode and leaves a directory bind mount dangling (nginx then 404s until
+# `ddev restart`). Mounting the parent build/ directory keeps the mount
+# valid across rebuilds; nginx points at the launch dir inside it.
 services:
   web:
     volumes:
-      - ../../Galaxy/build/default_html5/__htmlLaunchDir/Galaxy:/var/www/galaxy-game:ro
+      - ../../Galaxy/build:/var/www/galaxy-game:ro
