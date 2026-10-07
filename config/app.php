@@ -1,5 +1,11 @@
 <?php
 
+// The Galaxy release this website is built against. The number lives in the
+// VERSION file at the repository root so that it can be bumped, read and
+// compared without loading PHP: the game repo's tools read the same file
+// (tools/check_site_version.py) to catch a site deployed behind the game.
+$version = is_file($file = base_path('VERSION')) ? trim(file_get_contents($file)) : '';
+
 return [
 
     /*
@@ -14,6 +20,20 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | The Galaxy release this website is built against, from the VERSION file.
+    | It is shown on the dashboard. "unknown" means the file was missing from
+    | the build, which would mean the image was built from something other than
+    | a checkout of this repository.
+    |
+    */
+
+    'version' => $version !== '' ? $version : 'unknown',
 
     /*
     |--------------------------------------------------------------------------

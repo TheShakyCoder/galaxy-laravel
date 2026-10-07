@@ -37,6 +37,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'canPlay' => Server::query()->open()->exists(),
             'servers' => $servers,
+            'gameVersion' => config('app.version'),
         ]);
     }
 }

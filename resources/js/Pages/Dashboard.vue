@@ -12,6 +12,10 @@ defineProps({
         type: Array,
         required: true,
     },
+    gameVersion: {
+        type: String,
+        required: true,
+    },
 });
 
 const play = () => router.visit(route('play'));
@@ -40,12 +44,17 @@ const formatNumber = (value) =>
                 <div
                     class="flex items-center justify-between overflow-hidden bg-white p-6 shadow-xs sm:rounded-lg dark:bg-gray-800"
                 >
-                    <p class="text-gray-900 dark:text-gray-100">
-                        <template v-if="canPlay">Ready for launch.</template>
-                        <template v-else>
-                            No game servers are open right now.
-                        </template>
-                    </p>
+                    <div>
+                        <p class="text-gray-900 dark:text-gray-100">
+                            <template v-if="canPlay">Ready for launch.</template>
+                            <template v-else>
+                                No game servers are open right now.
+                            </template>
+                        </p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Galaxy {{ gameVersion }}
+                        </p>
+                    </div>
                     <PrimaryButton :disabled="!canPlay" @click="play">
                         Play
                     </PrimaryButton>

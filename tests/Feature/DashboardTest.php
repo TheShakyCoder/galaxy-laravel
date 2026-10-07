@@ -31,6 +31,19 @@ test('the dashboard shows the player\'s pilot on each server they joined', funct
         && str_contains($request->url(), 'http_key=the-http-key'));
 });
 
+test('the dashboard reports the Galaxy version the site was built against', function () {
+    $user = User::factory()->create();
+
+    $version = trim(file_get_contents(base_path('VERSION')));
+    expect($version)->not->toBe('');
+
+    $this->actingAs($user)->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard')
+            ->where('gameVersion', $version));
+});
+
 test('an unreachable server is shown as unreachable rather than failing the page', function () {
     $user = User::factory()->create();
     $server = Server::factory()->create(['nakama_host' => 'down.test']);
