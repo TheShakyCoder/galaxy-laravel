@@ -15,3 +15,21 @@ additional_hostnames:
 web_environment:
   - GALAXY_PLAY_URL=https://play.ddev.site
   - SESSION_DOMAIN=.ddev.site
+
+# Rebuild the game on every `ddev start` / `ddev restart`, so play.ddev.site
+# serves the code that is actually checked out instead of whatever the Defold
+# editor last built there (the stale-bundle trap recorded in the game's
+# plan.md: data/script changes are invisible in the browser until the HTML5
+# bundle is rebuilt).
+#
+# exec-host, not exec: bob and the JDK it needs live inside the installed
+# Defold editor on the host, and the build writes into Galaxy/build - which is
+# the folder this project's web container already mounts read-only
+# (docker-compose.game-proxy.yaml). Nothing runs inside the containers.
+#
+# `ddev restart --skip-hooks` skips it. A failed build is reported by the hook
+# but does not abort the restart (fail_on_hook_fail is left at its default),
+# so a broken game never stops the website coming up.
+hooks:
+  post-start:
+    - exec-host: "bash ../Galaxy/tools/build_game.sh"
