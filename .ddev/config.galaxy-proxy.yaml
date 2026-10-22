@@ -1,35 +1,36 @@
-# Local-only development routes for the sibling Galaxy game project.
-# Every local service is reached through its own *.ddev.site hostname
-# (no ports, no IPs):
+# Local-only development routes for the Galaxy game. Every local service is
+# reached through its own *.ddev.site hostname (no ports, no IPs):
 #   galaxy.ddev.site         - this Laravel site
-#   play.ddev.site           - the built HTML5 game (Galaxy/build/default_html5)
-#   nakama.ddev.site         - the local Nakama server (API + WebSocket)
-#   nakama-console.ddev.site - Nakama's admin console
+#   play.ddev.site           - the Godot game's web export (~/Godot/galaxy-flyers)
+#   play2.ddev.site          - the same game, the Play address of the second world
+#   nakama.ddev.site         - the first local game world, Nakama (API + WebSocket)
+#   nakama2.ddev.site        - the second local game world (server row `local2`)
+#   nakama-console.ddev.site - the first world's Nakama admin console
+# Nakama is installed separately (~/Sites/galaxy-nakama, see its README) and
+# reached on the host: world 1 on ports 7350/7351, world 2 on 7450/7451.
 # SESSION_DOMAIN=.ddev.site (config.local.yaml) shares the Laravel login
 # cookie with those sibling hostnames, so the game can ask for its play
 # token from play.ddev.site while the login lives on galaxy.ddev.site.
 additional_hostnames:
   - play
+  - play2
   - nakama
+  - nakama2
   - nakama-console
 web_environment:
   - GALAXY_PLAY_URL=https://play.ddev.site
   - SESSION_DOMAIN=.ddev.site
 
-# Rebuild the game on every `ddev start` / `ddev restart`, so play.ddev.site
-# serves the code that is actually checked out instead of whatever the Defold
-# editor last built there (the stale-bundle trap recorded in the game's
-# plan.md: data/script changes are invisible in the browser until the HTML5
-# bundle is rebuilt).
+# Re-export the game on every `ddev start` / `ddev restart`, so play.ddev.site
+# serves the code that is actually checked out.
 #
-# exec-host, not exec: bob and the JDK it needs live inside the installed
-# Defold editor on the host, and the build writes into Galaxy/build - which is
-# the folder this project's web container already mounts read-only
-# (docker-compose.game-proxy.yaml). Nothing runs inside the containers.
+# exec-host, not exec: Godot and its export templates live on the host, and
+# the export writes into ~/Godot/galaxy-flyers/build - the folder this
+# project's web container mounts read-only (docker-compose.game-proxy.yaml).
 #
-# `ddev restart --skip-hooks` skips it. A failed build is reported by the hook
-# but does not abort the restart (fail_on_hook_fail is left at its default),
-# so a broken game never stops the website coming up.
+# `ddev restart --skip-hooks` skips it. A failed export is reported by the
+# hook but does not abort the restart (fail_on_hook_fail is left at its
+# default), so a broken game never stops the website coming up.
 hooks:
   post-start:
-    - exec-host: "bash ../Galaxy/tools/build_game.sh"
+    - exec-host: "mkdir -p ../../Godot/galaxy-flyers/build/web && godot --headless --path ../../Godot/galaxy-flyers --export-release Web build/web/index.html"

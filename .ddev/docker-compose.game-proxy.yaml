@@ -1,10 +1,8 @@
-# Mount the whole stable build directory, NOT the editor's
-# build/default_html5/__htmlLaunchDir/Galaxy folder. Defold's "Build HTML5"
-# deletes and re-creates __htmlLaunchDir on every build, which changes its
-# inode and leaves a directory bind mount dangling (nginx then 404s until
-# `ddev restart`). Mounting the parent build/ directory keeps the mount
-# valid across rebuilds; nginx points at the launch dir inside it.
+# The Godot game's web export (~/Godot/galaxy-flyers/build/web), served as
+# play.ddev.site. Mounts the whole build/ directory, not build/web: a
+# re-export recreates build/web, which would leave a directory bind mount
+# dangling (nginx 404s until `ddev restart`).
 services:
   web:
     volumes:
-      - ../../Galaxy/build:/var/www/galaxy-game:ro
+      - ../../../Godot/galaxy-flyers/build:/var/www/galaxy-game:ro

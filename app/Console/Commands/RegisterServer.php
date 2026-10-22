@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
     {--secure : Nakama is https/wss (the default for a new server)}
     {--server-key= : Nakama NAKAMA_SERVER_KEY (public; ships in the client; a new server defaults to defaultkey)}
     {--internal-url= : Base URL this site uses to reach Nakama, if not the public one}
+    {--play-url= : Game address the Play button for this server opens (default: GALAXY_PLAY_URL)}
     {--http-key= : Nakama NAKAMA_HTTP_KEY, for server-to-server calls}
     {--secret= : Play token secret shared with Nakama PLAY_TOKEN_SECRET (generated for a new server if omitted)}
     {--closed : Stop accepting players}
@@ -36,6 +37,7 @@ class RegisterServer extends Command
             'name' => $this->option('name'),
             'nakama_host' => $this->option('host'),
             'internal_url' => $this->option('internal-url'),
+            'play_url' => $this->option('play-url'),
             'http_key' => $this->option('http-key'),
             'play_token_secret' => $this->option('secret'),
         ], fn (?string $value) => $value !== null && $value !== '');
@@ -81,11 +83,12 @@ class RegisterServer extends Command
         $server->save();
 
         $this->info(($isNew ? 'Added' : 'Updated')." game server {$server->slug}.");
-        $this->table(['name', 'players connect to', 'server key', 'site calls', 'open'], [[
+        $this->table(['name', 'players connect to', 'server key', 'site calls', 'play url', 'open'], [[
             $server->name,
             ($server->nakama_ssl ? 'https://' : 'http://')."{$server->nakama_host}:{$server->nakama_port}",
             $server->nakama_server_key,
             $server->apiUrl(),
+            $server->playUrl(),
             $server->is_open ? 'yes' : 'no',
         ]]);
 

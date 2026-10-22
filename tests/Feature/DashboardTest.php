@@ -31,6 +31,39 @@ test('the dashboard shows the player\'s pilot on each server they joined', funct
         && str_contains($request->url(), 'http_key=the-http-key'));
 });
 
+test('every open server is listed with a play link, joined or not', function () {
+    Http::preventStrayRequests();
+    $user = User::factory()->create();
+    Server::factory()->create(['name' => 'Bravo', 'nakama_host' => 'bravo.test', 'sort' => 2]);
+    Server::factory()->create(['name' => 'Alpha', 'nakama_host' => 'alpha.test', 'sort' => 1]);
+    Server::factory()->create(['name' => 'Shut', 'nakama_host' => 'shut.test', 'is_open' => false]);
+    Http::fake(['*/v2/rpc/player_summary*' => Http::response(['players' => []])]);
+
+    $this->actingAs($user)->get(route('dashboard'))
+        ->assertInertia(fn ($page) => $page
+            ->has('servers', 2)
+            ->where('servers.0.name', 'Alpha')
+            ->where('servers.0.is_open', true)
+            ->where('servers.0.joined', false)
+            ->where('servers.0.reachable', true)
+            ->where('servers.1.name', 'Bravo'));
+});
+
+test('a closed server the player joined is still listed, without a pilot link', function () {
+    Http::preventStrayRequests();
+    $user = User::factory()->create();
+    $server = Server::factory()->create(['name' => 'Retired', 'nakama_host' => 'retired.test', 'is_open' => false]);
+    $user->servers()->attach($server, ['first_played_at' => now(), 'last_played_at' => now()]);
+    Http::fake(['*/v2/rpc/player_summary*' => Http::response(['players' => []])]);
+
+    $this->actingAs($user)->get(route('dashboard'))
+        ->assertInertia(fn ($page) => $page
+            ->has('servers', 1)
+            ->where('servers.0.name', 'Retired')
+            ->where('servers.0.is_open', false)
+            ->where('servers.0.joined', true));
+});
+
 test('the dashboard reports the Galaxy version the site was built against', function () {
     $user = User::factory()->create();
 

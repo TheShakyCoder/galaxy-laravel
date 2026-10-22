@@ -64,6 +64,13 @@ test('updating a server changes only the options given', function () {
     expect($server->fresh())->is_open->toBeTrue()->nakama_server_key->toBe('new-key')->nakama_ssl->toBeTrue()->nakama_port->toBe(7350);
 });
 
+test('a server can be given its own play url', function () {
+    $this->artisan('galaxy:server', ['slug' => 'two', '--host' => 'api2.test', '--http-key' => 'k', '--play-url' => 'https://play2.test'])
+        ->assertSuccessful();
+
+    expect(Server::query()->where('slug', 'two')->first()->playUrl())->toBe('https://play2.test');
+});
+
 test('dev play tokens are only issued in the local environment', function () {
     $user = User::factory()->create();
     Server::factory()->create(['slug' => 'local']);

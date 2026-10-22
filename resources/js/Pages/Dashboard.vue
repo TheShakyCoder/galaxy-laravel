@@ -18,7 +18,8 @@ defineProps({
     },
 });
 
-const play = () => router.visit(route('play'));
+// Remembers the chosen server and leaves for the game (PlayController@select).
+const play = (server) => router.post(route('play.select', server.slug));
 
 const formatDate = (value) =>
     value ? new Date(value).toLocaleString() : '—';
@@ -42,22 +43,19 @@ const formatNumber = (value) =>
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div
-                    class="flex items-center justify-between overflow-hidden bg-white p-6 shadow-xs sm:rounded-lg dark:bg-gray-800"
+                    class="overflow-hidden bg-white p-6 shadow-xs sm:rounded-lg dark:bg-gray-800"
                 >
-                    <div>
-                        <p class="text-gray-900 dark:text-gray-100">
-                            <template v-if="canPlay">Ready for launch.</template>
-                            <template v-else>
-                                No game servers are open right now.
-                            </template>
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Galaxy {{ gameVersion }}
-                        </p>
-                    </div>
-                    <PrimaryButton :disabled="!canPlay" @click="play">
-                        Play
-                    </PrimaryButton>
+                    <p class="text-gray-900 dark:text-gray-100">
+                        <template v-if="canPlay">
+                            Ready for launch. Choose a game server below.
+                        </template>
+                        <template v-else>
+                            No game servers are open right now.
+                        </template>
+                    </p>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Galaxy {{ gameVersion }}
+                    </p>
                 </div>
 
                 <div
@@ -65,14 +63,21 @@ const formatNumber = (value) =>
                     :key="server.slug"
                     class="overflow-hidden bg-white p-6 shadow-xs sm:rounded-lg dark:bg-gray-800"
                 >
-                    <div class="flex items-baseline justify-between">
+                    <div class="flex items-center justify-between">
                         <h3
                             class="text-lg font-medium text-gray-900 dark:text-gray-100"
                         >
                             {{ server.name }}
                         </h3>
+                        <PrimaryButton
+                            v-if="server.is_open"
+                            :disabled="!server.reachable"
+                            @click="play(server)"
+                        >
+                            Play
+                        </PrimaryButton>
                         <span
-                            v-if="!server.is_open"
+                            v-else
                             class="text-sm text-gray-500 dark:text-gray-400"
                         >
                             Closed
@@ -83,7 +88,7 @@ const formatNumber = (value) =>
                         v-if="!server.reachable"
                         class="mt-4 text-sm text-gray-600 dark:text-gray-400"
                     >
-                        This server can't be reached right now.
+                        This server isn't running right now.
                     </p>
                     <p
                         v-else-if="!server.summary"

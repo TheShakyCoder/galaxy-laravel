@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * short-lived token signed with its play_token_secret (see PlayToken), and
  * the site calls its server-only RPCs with its http_key (see NakamaClient).
  */
-#[Fillable(['slug', 'name', 'nakama_host', 'nakama_port', 'nakama_ssl', 'nakama_server_key', 'internal_url', 'play_token_secret', 'http_key', 'is_open', 'sort'])]
+#[Fillable(['slug', 'name', 'nakama_host', 'nakama_port', 'nakama_ssl', 'nakama_server_key', 'internal_url', 'play_url', 'play_token_secret', 'http_key', 'is_open', 'sort'])]
 #[Hidden(['play_token_secret', 'http_key'])]
 class Server extends Model
 {
@@ -72,6 +72,15 @@ class Server extends Model
     public function scopeOpen(Builder $query): void
     {
         $query->where('is_open', true)->orderBy('sort')->orderBy('name');
+    }
+
+    /**
+     * Where this server's Play button sends players: its own game address
+     * when it has one (play_url), otherwise the site-wide one.
+     */
+    public function playUrl(): string
+    {
+        return filled($this->play_url) ? $this->play_url : config('galaxy.play_url');
     }
 
     /**

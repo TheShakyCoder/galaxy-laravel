@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 /**
  * Signs the short-lived token a player presents to a game server's Nakama
- * (AuthenticateCustom, verified by nakama-server/modules/auth.lua): an HS256
+ * (AuthenticateCustom, verified by the Nakama project's modules/auth.lua): an HS256
  * JWT whose subject is the user's public UUID and whose audience is the
  * server's slug, signed with that server's own play_token_secret.
  */

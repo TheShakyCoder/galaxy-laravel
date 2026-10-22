@@ -100,7 +100,7 @@ class PlayController extends Controller
     {
         $request->session()->put(self::SESSION_KEY, $server->slug);
 
-        return Inertia::location(config('galaxy.play_url'));
+        return Inertia::location($server->playUrl());
     }
 
     private function canPlay(?User $user): bool

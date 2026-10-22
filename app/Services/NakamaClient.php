@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Server-to-server calls to a game server's server-only RPCs
- * (nakama-server/modules/players.lua), authenticated with its http_key.
+ * (the Nakama project's modules/players.lua), authenticated with its http_key.
  */
 class NakamaClient
 {

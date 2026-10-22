@@ -95,6 +95,14 @@ test('choosing a server sends the player to the game with a token for that serve
     expect(verifiedPlayTokenClaims($token, $beta->play_token_secret)['aud'])->toBe('beta');
 });
 
+test('a server with its own play url sends its players there', function () {
+    $server = Server::factory()->create(['slug' => 'two', 'play_url' => 'https://play2.test']);
+
+    $this->actingAs(User::factory()->create())
+        ->post(route('play.select', $server))
+        ->assertRedirect('https://play2.test');
+});
+
 test('with one open server play goes straight to the game', function () {
     Server::factory()->create();
     Server::factory()->closed()->create();
